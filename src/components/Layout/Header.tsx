@@ -1,0 +1,76 @@
+import React from 'react';
+import { Bell, Search, Menu, Package, LogOut, User } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/AuthContext';
+
+interface HeaderProps {
+  title: string;
+  onMenuClick?: () => void;
+}
+
+export function Header({ title, onMenuClick }: HeaderProps) {
+  const { user, logout } = useAuth();
+
+  return (
+    <header className="bg-white/90 backdrop-blur-sm shadow-card border-b border-gray-200 relative z-30">
+      <div className="flex h-16 items-center justify-between px-4 md:px-6">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="md:hidden hover:bg-gray-100"
+            onClick={onMenuClick}
+          >
+            <Menu className="h-5 w-5 text-gray-700" />
+          </Button>
+          
+          <div className="flex items-center space-x-2 md:hidden">
+            <Package className="h-6 w-6 text-primary" />
+            <span className="font-bold text-gray-800">ระบบจัดการสต็อก</span>
+          </div>
+          
+          <h1 className="hidden md:block text-2xl font-bold text-gray-800 font-kanit">{title}</h1>
+        </div>
+
+        <div className="flex items-center space-x-4">
+          <div className="hidden md:block relative w-96">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+            <Input
+              placeholder="ค้นหาสินค้า, SKU, หรือบาร์โค้ด..."
+              className="pl-9 bg-white/80 border-gray-300 hover:bg-white focus:bg-white"
+            />
+          </div>
+
+          <Button variant="ghost" size="sm" className="relative hover:bg-gray-100">
+            <Bell className="h-5 w-5 text-gray-700" />
+            <Badge 
+              variant="destructive" 
+              className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center"
+            >
+              3
+            </Badge>
+          </Button>
+
+          {/* User Menu */}
+          <div className="flex items-center space-x-2">
+            <div className="hidden md:flex items-center space-x-2 text-sm text-gray-600">
+              <User className="h-4 w-4" />
+              <span>{user?.username || 'ผู้ใช้'}</span>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={logout}
+              className="hover:bg-red-50 hover:text-red-600 hover:border-red-300"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              ออกจากระบบ
+            </Button>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
