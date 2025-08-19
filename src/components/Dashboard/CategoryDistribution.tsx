@@ -44,23 +44,30 @@ export function CategoryDistribution({ categories }: CategoryDistributionProps) 
   const totalProducts = categories.reduce((sum, cat) => sum + cat.productCount, 0);
 
   return (
-    <Card className="bg-gradient-to-br from-purple-50 to-violet-50 border-purple-200">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-semibold text-purple-800 flex items-center">
-          <Package className="h-5 w-5 mr-2" />
+    <Card className="bg-gradient-to-br from-purple-50 via-white to-violet-50 border-2 border-purple-200 shadow-xl relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-purple-200 rounded-full -translate-y-32 translate-x-32 blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-violet-200 rounded-full translate-y-40 -translate-x-40 blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-indigo-200 rounded-full -translate-x-24 -translate-y-24 blur-2xl"></div>
+      </div>
+      
+      <CardHeader className="pb-4 relative z-10">
+        <CardTitle className="text-lg sm:text-xl font-bold text-purple-800 flex items-center">
+          <Package className="h-6 w-6 mr-3 text-purple-600" />
           การกระจายหมวดหมู่
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6 relative z-10">
         {/* Summary Stats */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="text-center p-3 bg-white rounded-lg border border-purple-200">
+          <div className="text-center p-4 bg-white/60 backdrop-blur-sm rounded-lg border-2 border-purple-200 hover:border-purple-300 transition-all duration-200">
             <p className="text-2xl font-bold text-purple-800">{formatNumber(totalProducts)}</p>
-            <p className="text-xs text-purple-600">รายการสินค้าทั้งหมด</p>
+            <p className="text-sm text-purple-600 font-medium">รายการสินค้าทั้งหมด</p>
           </div>
-          <div className="text-center p-3 bg-white rounded-lg border border-purple-200">
+          <div className="text-center p-4 bg-white/60 backdrop-blur-sm rounded-lg border-2 border-purple-200 hover:border-purple-300 transition-all duration-200">
             <p className="text-2xl font-bold text-purple-800">{formatCurrency(totalValue)}</p>
-            <p className="text-xs text-purple-600">มูลค่ารวม</p>
+            <p className="text-sm text-purple-600 font-medium">มูลค่ารวม</p>
           </div>
         </div>
 
@@ -96,23 +103,23 @@ export function CategoryDistribution({ categories }: CategoryDistributionProps) 
         </div>
 
         {/* Category List */}
-        <div className="space-y-2">
+        <div className="space-y-3">
           {categories.map((category, index) => {
             const percentage = totalValue > 0 ? (category.totalValue / totalValue) * 100 : 0;
             return (
-              <div key={category.id} className="flex items-center justify-between p-2 bg-white rounded-lg border border-purple-200">
-                <div className="flex items-center space-x-2">
+              <div key={category.id} className="flex items-center justify-between p-3 bg-white/60 backdrop-blur-sm rounded-lg border-2 border-purple-200/50 hover:border-purple-300 transition-all duration-200">
+                <div className="flex items-center space-x-3">
                   <div 
-                    className="w-3 h-3 rounded-full" 
+                    className="w-4 h-4 rounded-full border-2 border-white shadow-sm" 
                     style={{ backgroundColor: COLORS[index % COLORS.length] }}
                   ></div>
-                  <span className="text-sm font-medium text-purple-800">{category.name}</span>
+                  <span className="text-sm font-semibold text-purple-800">{category.name}</span>
                 </div>
                 <div className="text-right">
-                  <Badge variant="secondary" className="bg-purple-100 text-purple-800 text-xs">
+                  <Badge variant="secondary" className="bg-purple-500/10 text-purple-700 border-2 border-purple-300 text-xs font-bold px-3 py-1">
                     {category.productCount} รายการ
                   </Badge>
-                  <p className="text-xs text-purple-600 mt-1">
+                  <p className="text-sm text-purple-600 mt-2 font-medium">
                     {percentage.toFixed(1)}% • {formatCurrency(category.totalValue)}
                   </p>
                 </div>
@@ -123,9 +130,9 @@ export function CategoryDistribution({ categories }: CategoryDistributionProps) 
 
         {/* Empty State */}
         {categories.length === 0 && (
-          <div className="text-center py-8">
-            <Package className="h-12 w-12 text-purple-300 mx-auto mb-3" />
-            <p className="text-sm text-purple-600">ยังไม่มีข้อมูลหมวดหมู่</p>
+          <div className="text-center py-12">
+            <Package className="h-16 w-16 text-purple-300 mx-auto mb-4" />
+            <p className="text-base text-purple-600 font-medium">ยังไม่มีข้อมูลหมวดหมู่</p>
           </div>
         )}
       </CardContent>

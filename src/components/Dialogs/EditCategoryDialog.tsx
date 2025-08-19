@@ -98,57 +98,57 @@ export function EditCategoryDialog({ category, open, onOpenChange, onCategoryUpd
             แก้ไขข้อมูลหมวดหมู่สินค้า
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">ชื่อหมวดหมู่ *</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
-              placeholder="ชื่อหมวดหมู่"
-              required
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">ชื่อหมวดหมู่ *</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                placeholder="ชื่อหมวดหมู่"
+                required
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="description">คำอธิบาย</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
-              placeholder="คำอธิบายหมวดหมู่"
-              rows={3}
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="description">คำอธิบาย</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                placeholder="คำอธิบายหมวดหมู่"
+                rows={3}
+              />
+            </div>
 
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="is_medicine"
-              checked={formData.is_medicine}
-              onCheckedChange={(checked) => setFormData({...formData, is_medicine: checked as boolean})}
-            />
-            <Label htmlFor="is_medicine" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-              หมวดหมู่ยา (ต้องการวันหมดอายุ)
-            </Label>
-          </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="is_medicine"
+                checked={formData.is_medicine}
+                onCheckedChange={(checked) => setFormData({...formData, is_medicine: checked as boolean})}
+              />
+              <Label htmlFor="is_medicine" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                หมวดหมู่ยา (ต้องการวันหมดอายุ)
+              </Label>
+            </div>
 
-          <div className="flex justify-end space-x-2 pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              ยกเลิก
-            </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  กำลังบันทึก...
-                </>
-              ) : (
-                'บันทึกการแก้ไข'
-              )}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
+            <div className="flex justify-end space-x-2 pt-4">
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                ยกเลิก
+              </Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    กำลังบันทึก...
+                  </>
+                ) : (
+                  'บันทึกการแก้ไข'
+                )}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
     </Dialog>
   );
 }

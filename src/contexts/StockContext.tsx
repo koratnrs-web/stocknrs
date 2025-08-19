@@ -179,7 +179,7 @@ export function StockProvider({ children }: { children: React.ReactNode }) {
       if (suppliers) dispatch({ type: 'SET_SUPPLIERS', payload: suppliers });
 
       // Load movements
-      const { data: movements } = await supabase.from('movements').select('*');
+      const { data: movements } = await supabase.from('stock_movements').select('*');
       if (movements) dispatch({ type: 'SET_MOVEMENTS', payload: movements });
 
     } catch (error) {

@@ -302,58 +302,65 @@ export default function BudgetRequest() {
         />
 
         {/* Search and Filter Section */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="space-y-4">
+        <Card className="bg-gradient-to-br from-green-50 via-white to-blue-50 border-2 border-green-200 shadow-xl relative overflow-hidden">
+          {/* Background decoration */}
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-green-200 rounded-full -translate-y-32 translate-x-32 blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-200 rounded-full translate-y-40 -translate-x-40 blur-3xl"></div>
+            <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-emerald-200 rounded-full -translate-x-24 -translate-y-24 blur-2xl"></div>
+          </div>
+          
+          <CardContent className="p-6 sm:p-8 relative z-10">
+            <div className="space-y-6">
               {/* Scanner Status */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">สถานะเครื่องสแกน:</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-lg sm:text-xl text-muted-foreground font-semibold">สถานะเครื่องสแกน:</span>
                   <BarcodeScannerIndicator isDetected={scannerDetected} />
                 </div>
                 {scannerDetected && (
-                  <p className="text-xs text-green-600">
-                    พร้อมใช้งาน - สแกนบาร์โค้ดเพื่อค้นหาคำขอ
+                  <p className="text-base text-green-700 font-semibold bg-green-100 px-4 py-2 rounded-full border-2 border-green-300 shadow-sm">
+                    ✨ พร้อมใช้งาน - สแกนบาร์โค้ดเพื่อค้นหาคำขอ
                   </p>
                 )}
               </div>
               
               {/* Search Bar */}
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-muted-foreground" />
                   <Input
                     placeholder="ค้นหาจากเลขที่คำขอ, ผู้ขอ, รหัสบัญชี, หรือหมายเหตุ..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    className="pl-12 text-lg h-14 border-2 border-green-200 focus:border-green-500 focus:ring-4 focus:ring-green-200/50 bg-white/90 backdrop-blur-sm font-medium placeholder:text-muted-foreground/70"
                   />
                   {searchTerm && (
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-red-50"
                       onClick={() => setSearchTerm('')}
                     >
-                      <X className="h-3 w-3" />
+                      <X className="h-4 w-4" />
                     </Button>
                   )}
                 </div>
                 <Button
                   variant={showFilters ? "default" : "outline"}
                   onClick={() => setShowFilters(!showFilters)}
-                  className="gap-2"
+                  className="gap-2 h-14 px-6 text-base font-medium border-2 border-blue-200 hover:border-blue-500 focus:ring-4 focus:ring-blue-200/50"
                 >
-                  <Filter className="h-4 w-4" />
+                  <Filter className="h-5 w-5" />
                   ตัวกรอง
                 </Button>
                 {hasActiveFilters && (
                   <Button
                     variant="outline"
                     onClick={clearFilters}
-                    className="gap-2"
+                    className="gap-2 h-14 px-6 text-base font-medium border-2 border-orange-200 hover:border-orange-500 focus:ring-4 focus:ring-orange-200/50"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-5 w-5" />
                     ล้างตัวกรอง
                   </Button>
                 )}
@@ -361,56 +368,42 @@ export default function BudgetRequest() {
 
               {/* Filter Options */}
               {showFilters && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
-                  <div className="space-y-2">
-                    <Label htmlFor="status-filter">สถานะ</Label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-green-200">
+                  <div className="space-y-3">
+                    <Label htmlFor="status-filter" className="text-base font-semibold text-green-800">สถานะ</Label>
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-12 text-base border-2 border-green-200 focus:border-green-500 focus:ring-4 focus:ring-green-200/50 bg-white/90 backdrop-blur-sm font-medium">
                         <SelectValue placeholder="เลือกสถานะ" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="ALL">ทั้งหมด</SelectItem>
-                        <SelectItem value="PENDING">รอการอนุมัติ</SelectItem>
-                        <SelectItem value="APPROVED">อนุมัติแล้ว</SelectItem>
-                        <SelectItem value="REJECTED">ไม่อนุมัติ</SelectItem>
+                      <SelectContent className="bg-white/95 backdrop-blur-sm border-2 border-green-200">
+                        <SelectItem value="ALL" className="text-base font-medium py-3">ทั้งหมด</SelectItem>
+                        <SelectItem value="PENDING" className="text-base font-medium py-3">รอการอนุมัติ</SelectItem>
+                        <SelectItem value="APPROVED" className="text-base font-medium py-3">อนุมัติแล้ว</SelectItem>
+                        <SelectItem value="REJECTED" className="text-base font-medium py-3">ไม่อนุมัติ</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="date-from">วันที่เริ่มต้น</Label>
+                  <div className="space-y-3">
+                    <Label htmlFor="date-from" className="text-base font-semibold text-blue-800">วันที่เริ่มต้น</Label>
                     <Input
                       id="date-from"
                       type="date"
                       value={dateFrom}
                       onChange={(e) => setDateFrom(e.target.value)}
+                      className="h-12 text-base border-2 border-blue-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-200/50 bg-white/90 backdrop-blur-sm font-medium"
                     />
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="date-to">วันที่สิ้นสุด</Label>
+                  <div className="space-y-3">
+                    <Label htmlFor="date-to" className="text-base font-semibold text-blue-800">วันที่สิ้นสุด</Label>
                     <Input
                       id="date-to"
                       type="date"
                       value={dateTo}
                       onChange={(e) => setDateTo(e.target.value)}
+                      className="h-12 text-base border-2 border-blue-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-200/50 bg-white/90 backdrop-blur-sm font-medium"
                     />
-                  </div>
-                </div>
-              )}
-
-              {/* Search Results Summary */}
-              {hasActiveFilters && (
-                <div className="pt-4 border-t">
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>
-                      แสดงผลลัพธ์ {filteredRequests.length} จาก {requests.length} คำขอ
-                    </span>
-                    {hasActiveFilters && (
-                      <span className="text-primary">
-                        ใช้ตัวกรอง: {searchTerm && `"${searchTerm}"`} {statusFilter !== 'ALL' && `สถานะ: ${statusFilter === 'PENDING' ? 'รอการอนุมัติ' : statusFilter === 'APPROVED' ? 'อนุมัติแล้ว' : 'ไม่อนุมัติ'}`} {(dateFrom || dateTo) && `ช่วงวันที่: ${dateFrom || 'ไม่จำกัด'} - ${dateTo || 'ไม่จำกัด'}`}
-                      </span>
-                    )}
                   </div>
                 </div>
               )}

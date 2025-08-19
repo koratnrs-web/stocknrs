@@ -13,11 +13,11 @@ import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { User, Bell, Database, Shield, Palette, Upload, Download, Trash2, Settings as SettingsIcon, Package, LogOut, Key, Eye, EyeOff, Search } from 'lucide-react';
+import { User, Bell, Database, Shield, Palette, Upload, Download, Trash2, Settings as SettingsIcon, Package, LogOut, Key, Eye, EyeOff } from 'lucide-react';
 import { PageHeader } from '@/components/Layout/PageHeader';
 import { supabase } from '@/lib/supabase';
 import { useStock } from '@/contexts/StockContext';
-import { useAuth } from '@/contexts/AuthContext';
+// Removed: import { useAuth } from '@/contexts/AuthContext';
 import { exportDataToJSON, exportDataToCSV, parseJSONFile, parseCSVFile, ExportData, generateProductTemplate, generateCategoryTemplate, generateSupplierTemplate } from '@/utils/dataExport';
 import { 
   loadSettingsFromDB, 
@@ -30,7 +30,6 @@ import {
   testEmailServerConnection,
   SettingsData 
 } from '@/lib/settingsService';
-import { Badge } from '@/components/ui/badge';
 
 const settingsSchema = z.object({
   companyName: z.string().min(1, 'ชื่อบริษัทจำเป็นต้องระบุ'),
@@ -80,7 +79,7 @@ export default function Settings() {
     confirmPassword: ''
   });
   const { getStockLevel } = useStock();
-  const { user, logout } = useAuth();
+  // Removed: const { user, logout } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -632,18 +631,9 @@ export default function Settings() {
     }
   };
 
-  const handleLogout = () => {
-    if (window.confirm('คุณแน่ใจหรือไม่ที่จะออกจากระบบ?')) {
-      logout();
-    }
-  };
-
-  const handleLogoutAllDevices = () => {
-    if (window.confirm('คุณแน่ใจหรือไม่ที่จะออกจากระบบทุกอุปกรณ์? การกระทำนี้จะออกจากระบบทุกที่ที่คุณเข้าสู่ระบบไว้')) {
-      localStorage.clear();
-      logout();
-    }
-  };
+  // Removed: Logout functions - no longer needed without authentication
+  // const handleLogout = () => { ... };
+  // const handleLogoutAllDevices = () => { ... };
 
   // Requester management functions
   const addRequester = () => {
@@ -680,7 +670,7 @@ export default function Settings() {
             stats={[
               {
                 label: "ผู้ใช้ปัจจุบัน", 
-                value: user?.username || 'ไม่ระบุ',
+                value: 'ผู้ดูแลระบบ',
                 icon: User,
                 trend: {
                   value: "ออนไลน์",
@@ -701,7 +691,7 @@ export default function Settings() {
                 value: "เปิดใช้งาน",
                 icon: Bell,
                 trend: {
-                  value: "ใช้งาน",
+                  value: "เปิด",
                   isPositive: true
                 }
               },
@@ -716,67 +706,6 @@ export default function Settings() {
               }
             ]}
           />
-
-          {/* Search and Actions Card */}
-          <Card className="bg-gradient-to-br from-amber-50 via-white to-orange-50 border-2 border-amber-200 shadow-xl relative overflow-hidden">
-            {/* Background decoration */}
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-amber-200 rounded-full -translate-y-24 translate-x-24 blur-2xl"></div>
-              <div className="absolute bottom-0 left-0 w-56 h-56 bg-orange-200 rounded-full translate-y-28 -translate-x-28 blur-2xl"></div>
-            </div>
-            
-            <CardContent className="p-4 sm:p-6 relative z-10">
-              <div className="space-y-4">
-                {/* Search Bar */}
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                    <Input
-                      placeholder="ค้นหาการตั้งค่า..."
-                      className="pl-10 text-base h-12 border-2 border-amber-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 bg-white/80 backdrop-blur-sm"
-                    />
-                  </div>
-                </div>
-
-                {/* Header Actions */}
-                <div className="flex items-center justify-between pt-4 border-t border-amber-200">
-                  <div className="flex items-center space-x-2">
-                    {/* Additional actions can be added here */}
-                  </div>
-                  
-                  <div className="flex items-center space-x-3">
-                    {/* Notifications */}
-                    <Button variant="ghost" size="sm" className="relative hover:bg-amber-100 h-10 px-3">
-                      <Bell className="h-5 w-5 text-amber-700" />
-                      <Badge 
-                        variant="destructive" 
-                        className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center"
-                      >
-                        3
-                      </Badge>
-                    </Button>
-
-                    {/* User Menu */}
-                    <div className="flex items-center space-x-2">
-                      <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-600">
-                        <User className="h-4 w-4" />
-                        <span className="font-medium">{user?.username || 'ผู้ใช้ระบบ'}</span>
-                      </div>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={handleLogout}
-                        className="hover:bg-red-50 hover:text-red-600 hover:border-red-300 h-10 px-3"
-                      >
-                        <LogOut className="h-4 w-4 mr-2" />
-                        ออกจากระบบ
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
           <Tabs defaultValue="general" className="space-y-6">
             <TabsList className="grid w-full grid-cols-6 bg-gradient-to-r from-gray-50 to-gray-100 p-2 rounded-xl shadow-inner border border-gray-200">
@@ -1663,22 +1592,10 @@ export default function Settings() {
                 <div className="space-y-4">
                   <h4 className="font-medium text-foreground">การจัดการเซสชัน</h4>
                   <div className="flex flex-col sm:flex-row gap-2">
-                    <Button 
-                      variant="outline" 
-                      onClick={handleLogoutAllDevices}
-                      className="justify-start border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700"
-                    >
-                      <LogOut className="mr-2 h-4 w-4" />
-                      ออกจากระบบทุกอุปกรณ์
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      onClick={handleLogout}
-                      className="justify-start border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700"
-                    >
-                      <LogOut className="mr-2 h-4 w-4" />
-                      ออกจากระบบ
-                    </Button>
+                    {/* Removed: Logout buttons - no longer needed without authentication */}
+                    <div className="text-sm text-gray-500 italic">
+                      ระบบไม่ต้องการการยืนยันตัวตน
+                    </div>
                   </div>
                 </div>
 
@@ -1687,18 +1604,15 @@ export default function Settings() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>ชื่อผู้ใช้</Label>
-                      <Input value={user?.username || 'ไม่ระบุ'} disabled />
+                      <Input value="ผู้ดูแลระบบ" disabled />
                     </div>
                     <div className="space-y-2">
                       <Label>บทบาท</Label>
-                      <Input value={user?.role || 'ไม่ระบุ'} disabled />
+                      <Input value="ผู้จัดการสต็อก" disabled />
                     </div>
                     <div className="space-y-2">
-                      <Label>เวลาเข้าสู่ระบบ</Label>
-                      <Input 
-                        value={user?.loginTime ? new Date(user.loginTime).toLocaleString('th-TH') : 'ไม่ระบุ'} 
-                        disabled 
-                      />
+                      <Label>สถานะระบบ</Label>
+                      <Input value="พร้อมใช้งาน" disabled />
                     </div>
                   </div>
                 </div>

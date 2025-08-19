@@ -32,11 +32,11 @@ export default function ApprovalPage() {
   const [pendingDecision, setPendingDecision] = useState<'APPROVED' | 'REJECTED' | null>(null);
 
   useEffect(() => {
-    console.log('ApprovalPage - URL params:', { requestId, decision });
+    // Debug info removed
     if (requestId) {
       fetchRequest();
     } else {
-      console.log('ApprovalPage - No request_id found in URL');
+      // No request ID found, stopping loading
       setLoading(false);
     }
   }, [requestId]);
@@ -65,7 +65,6 @@ export default function ApprovalPage() {
   };
 
   const handleDecisionClick = (decision: 'APPROVED' | 'REJECTED') => {
-    console.log('handleDecisionClick called:', decision);
     setPendingDecision(decision);
     setConfirmDialogOpen(true);
   };
@@ -78,11 +77,9 @@ export default function ApprovalPage() {
   const confirmDecision = async () => {
     if (!request || !pendingDecision || !requestId || !isFormValid()) return;
 
-    console.log('confirmDecision started:', { requestId, pendingDecision, approverName });
     setSubmitting(true);
     try {
       // 1. อัปเดตสถานะในตาราง budget_requests
-      console.log('Updating budget_requests table...');
       const { data: updatedRequest, error: updateError } = await supabase
         .from('budget_requests')
         .update({ status: pendingDecision })
@@ -91,20 +88,16 @@ export default function ApprovalPage() {
         .single();
 
       if (updateError) {
-        console.error('Update error:', updateError);
         throw updateError;
       }
-      console.log('Budget request updated:', updatedRequest);
 
       // 2. เพิ่มประวัติการอนุมัติในตาราง approvals
-      console.log('Inserting approval record...');
       const approvalData = {
-        request_id: requestId, // ใช้ string ตรงๆ ไม่ต้อง parseInt
-        decision: pendingDecision === 'APPROVED' ? 'APPROVE' : 'REJECT', // แปลงเป็นค่าที่ database ต้องการ
-        remark: note.trim() || null, // ใช้ remark แทน note
-        approver_name: approverName.trim() // ใช้ approver_name แทน approved_by
+        request_id: requestId,
+        decision: pendingDecision === 'APPROVED' ? 'APPROVE' : 'REJECT',
+        remark: note.trim() || null,
+        approver_name: approverName.trim()
       };
-      console.log('Approval data to insert:', approvalData);
       
       const { data: newApproval, error: insertError } = await supabase
         .from('approvals')
@@ -113,33 +106,19 @@ export default function ApprovalPage() {
         .single();
 
       if (insertError) {
-        console.error('Insert error details:', insertError);
-        console.error('Error message:', insertError.message);
-        console.error('Error code:', insertError.code);
-        console.error('Error details:', insertError.details);
-        console.error('Error hint:', insertError.hint);
-        console.error('Full error object:', JSON.stringify(insertError, null, 2));
-        console.log('Data that failed to insert:', JSON.stringify(approvalData, null, 2));
-        console.log('requestId type:', typeof requestId, 'value:', requestId);
-        console.log('pendingDecision type:', typeof pendingDecision, 'value:', pendingDecision);
-        console.log('approverName type:', typeof approverName, 'value:', approverName);
-        console.log('note type:', typeof note, 'value:', note);
+        console.error('Approval insert error:', insertError);
         throw insertError;
       }
-      console.log('Approval record inserted:', newApproval);
 
       // 3. แสดงข้อความสำเร็จ
-      console.log('Showing success toast...');
       toast({
         title: `บันทึกการ${pendingDecision === 'APPROVED' ? 'อนุมัติ' : 'ไม่อนุมัติ'}เรียบร้อยแล้ว`,
         description: `คำขอเลขที่ ${request.request_no} ได้รับการ${pendingDecision === 'APPROVED' ? 'อนุมัติ' : 'ไม่อนุมัติ'}โดย ${approverName}`,
       });
 
       // 4. ปิด dialog และ redirect
-      console.log('Closing dialog and redirecting...');
       setConfirmDialogOpen(false);
       setTimeout(() => {
-        console.log('Navigating to home...');
         navigate('/');
       }, 2000);
 
@@ -152,7 +131,6 @@ export default function ApprovalPage() {
       });
     } finally {
       setSubmitting(false);
-      console.log('confirmDecision completed');
     }
   };
 

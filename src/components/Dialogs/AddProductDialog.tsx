@@ -63,6 +63,34 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
   const scannerInputRef = React.useRef<string>('');
   const scannerTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      sku: '',
+      barcode: '',
+      description: '',
+      category_id: '',
+      supplier_id: '',
+      unit_price: '',
+      current_stock: '',
+      min_stock: '',
+      max_stock: '',
+      location: ''
+    });
+    setExpiryDate(undefined);
+  };
+
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    if (!newOpen) {
+      resetForm();
+    }
+  };
+
+  const updateFormData = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
   const fetchCategoriesAndSuppliers = async () => {
     try {
       const [categoriesResult, suppliersResult] = await Promise.all([
@@ -70,13 +98,16 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
         supabase.from('suppliers').select('id, name').order('name')
       ]);
 
-      if (categoriesResult.error) throw categoriesResult.error;
-      if (suppliersResult.error) throw suppliersResult.error;
+      if (categoriesResult.error) {
+        throw categoriesResult.error;
+      }
+      if (suppliersResult.error) {
+        throw suppliersResult.error;
+      }
 
       setCategories(categoriesResult.data || []);
       setSuppliers(suppliersResult.data || []);
     } catch (error) {
-      console.error('Error fetching data:', error);
       toast({
         title: "เกิดข้อผิดพลาด",
         description: "ไม่สามารถดึงข้อมูลหมวดหมู่และผู้จำหน่ายได้",
@@ -90,6 +121,8 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
       fetchCategoriesAndSuppliers();
     }
   }, [open]);
+
+
 
   const generateSKU = async () => {
     try {
@@ -112,7 +145,6 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
 
       return `SKU-${nextNum.toString().padStart(4, '0')}`;
     } catch (error) {
-      console.error('Error generating SKU:', error);
       return `SKU-${Date.now()}`;
     }
   };
@@ -124,7 +156,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
     const { data, error } = await supabase
       .from('products')
       .select('id')
-      .eq('sku', barcode)
+      .eq('barcode', barcode)
       .single();
       
     return !error && data;
@@ -254,6 +286,7 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
         .insert({
           name: formData.name,
           sku: sku,
+          barcode: formData.barcode || null,
           description: formData.description || null,
           category_id: formData.category_id,
           supplier_id: formData.supplier_id,
@@ -287,58 +320,61 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
         location: ''
       });
       
+      setExpiryDate(undefined);
       setOpen(false);
       onProductAdded();
 
     } catch (error) {
-      console.error('Error adding product:', error);
+      // More specific error handling
+      let errorMessage = "ไม่สามารถเพิ่มสินค้าได้";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'object' && error !== null && 'message' in error) {
+        errorMessage = String(error.message);
+      }
+      
       toast({
         title: "เกิดข้อผิดพลาด",
-        description: "ไม่สามารถเพิ่มสินค้าได้",
+        description: errorMessage,
         variant: "destructive",
       });
-      
-      setExpiryDate(undefined);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 h-12 px-6 text-base font-semibold">
+        <Button 
+          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 h-12 px-6 text-base font-semibold"
+          onClick={() => {
+            setOpen(true);
+          }}
+        >
           <Plus className="h-5 w-5 mr-2" />
           เพิ่มสินค้าใหม่
         </Button>
       </DialogTrigger>
-      <DialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-[600px] max-h-[90vh] overflow-y-auto bg-gradient-to-br from-blue-50 via-white to-purple-50 border-2 border-blue-300 shadow-2xl overflow-hidden sm:w-auto sm:h-auto">
-        {/* Background decoration */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-200 rounded-full -translate-y-32 translate-x-32 blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-purple-200 rounded-full translate-y-40 -translate-x-40 blur-3xl"></div>
-          <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-indigo-200 rounded-full -translate-x-24 -translate-y-24 blur-3xl"></div>
-        </div>
-        
-        <DialogHeader className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white rounded-t-lg -m-6 mb-6 p-6 relative z-10 shadow-lg">
-          <DialogTitle className="text-2xl font-bold flex items-center">
-            <Plus className="h-6 w-6 mr-3 text-blue-200" />
-            เพิ่มสินค้าใหม่
-          </DialogTitle>
-          <DialogDescription className="text-blue-100 text-base">
-            กรอกข้อมูลสินค้าให้ครบถ้วน สามารถใช้เครื่องอ่านบาร์โค้ดได้
+      <DialogContent className="sm:max-w-[600px] bg-gradient-card shadow-glow border-white/10">
+        <DialogHeader>
+          <DialogTitle className="text-foreground">เพิ่มสินค้าใหม่</DialogTitle>
+          <DialogDescription>
+            เพิ่มสินค้าใหม่ลงในระบบ
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        
+        <form onSubmit={handleSubmit} className="space-y-6 relative z-20">
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-3">
               <Label htmlFor="name" className="text-base font-semibold text-gray-700">ชื่อสินค้า *</Label>
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                onChange={(e) => updateFormData('name', e.target.value)}
                 placeholder="ชื่อสินค้า"
-                className="h-12 text-base border-2 border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                className="h-12 text-base border-2 border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 relative z-30 cursor-text"
+                style={{ position: 'relative', zIndex: 30 }}
               />
             </div>
 
@@ -347,9 +383,10 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
               <Input
                 id="sku"
                 value={formData.sku}
-                onChange={(e) => setFormData({...formData, sku: e.target.value})}
+                onChange={(e) => updateFormData('sku', e.target.value)}
                 placeholder="SKU-0001"
-                className="h-12 text-base border-2 border-green-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
+                className="h-12 text-base border-2 border-green-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 relative z-30 cursor-text"
+                style={{ position: 'relative', zIndex: 30 }}
               />
             </div>
           </div>
@@ -359,21 +396,22 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
             <Textarea
               id="description"
               value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              onChange={(e) => updateFormData('description', e.target.value)}
               placeholder="รายละเอียดสินค้า"
               rows={3}
-              className="text-base border-2 border-purple-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
+              className="text-base border-2 border-purple-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 relative z-30 cursor-text"
+              style={{ position: 'relative', zIndex: 30 }}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="category" className="text-base font-semibold text-gray-700">หมวดหมู่ *</Label>
-              <Select value={formData.category_id} onValueChange={(value) => setFormData({...formData, category_id: value})}>
-                <SelectTrigger className="h-12 text-base border-2 border-indigo-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200">
+              <Select value={formData.category_id} onValueChange={(value) => updateFormData('category_id', value)}>
+                <SelectTrigger className="h-12 text-base border-2 border-indigo-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 relative z-30 cursor-pointer">
                   <SelectValue placeholder="เลือกหมวดหมู่" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="relative z-50">
                   {categories.map((category) => (
                     <SelectItem key={category.id} value={category.id} className="text-base">
                       {category.name}
@@ -385,11 +423,11 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
 
             <div className="space-y-2">
               <Label htmlFor="supplier" className="text-base font-semibold text-gray-700">ผู้จำหน่าย *</Label>
-              <Select value={formData.supplier_id} onValueChange={(value) => setFormData({...formData, supplier_id: value})}>
-                <SelectTrigger className="h-12 text-base border-2 border-emerald-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200">
+              <Select value={formData.supplier_id} onValueChange={(value) => updateFormData('supplier_id', value)}>
+                <SelectTrigger className="h-12 text-base border-2 border-emerald-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 relative z-30 cursor-pointer">
                   <SelectValue placeholder="เลือกผู้จำหน่าย" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="relative z-50">
                   {suppliers.map((supplier) => (
                     <SelectItem key={supplier.id} value={supplier.id} className="text-base">
                       {supplier.name}
@@ -406,9 +444,10 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
               <Input
                 id="barcode"
                 value={formData.barcode}
-                onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
+                onChange={(e) => updateFormData('barcode', e.target.value)}
                 placeholder="สแกนหรือป้อนบาร์โค้ด"
-                className="h-12 text-base border-2 border-orange-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+                className="h-12 text-base border-2 border-orange-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 relative z-30 cursor-text"
+                style={{ position: 'relative', zIndex: 30 }}
               />
               <p className="text-sm text-gray-600 bg-orange-50 p-3 rounded-lg border border-orange-200">
                 รองรับเครื่องอ่านบาร์โค้ด หรือป้อนด้วยตนเอง (ถ้าไม่ระบุ SKU จะใช้บาร์โค้ดเป็น SKU)
@@ -424,9 +463,10 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
                 min="0"
                 step="0.01"
                 value={formData.unit_price}
-                onChange={(e) => setFormData({...formData, unit_price: e.target.value})}
+                onChange={(e) => updateFormData('unit_price', e.target.value)}
                 placeholder="0.00"
-                className="h-12 text-base border-2 border-pink-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200"
+                className="h-12 text-base border-2 border-pink-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 relative z-30 cursor-text"
+                style={{ position: 'relative', zIndex: 30 }}
               />
             </div>
 
@@ -435,9 +475,10 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
               <Input
                 id="location"
                 value={formData.location}
-                onChange={(e) => setFormData({...formData, location: e.target.value})}
+                onChange={(e) => updateFormData('location', e.target.value)}
                 placeholder="A1-B2-C3"
-                className="h-12 text-base border-2 border-cyan-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200"
+                className="h-12 text-base border-2 border-cyan-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 relative z-30 cursor-text"
+                style={{ position: 'relative', zIndex: 30 }}
               />
             </div>
           </div>
@@ -450,9 +491,10 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
                 type="number"
                 min="0"
                 value={formData.current_stock}
-                onChange={(e) => setFormData({...formData, current_stock: e.target.value})}
+                onChange={(e) => updateFormData('current_stock', e.target.value)}
                 placeholder="0"
-                className="h-12 text-base border-2 border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                className="h-12 text-base border-2 border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 relative z-30 cursor-text"
+                style={{ position: 'relative', zIndex: 30 }}
               />
             </div>
 
@@ -463,9 +505,10 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
                 type="number"
                 min="0"
                 value={formData.min_stock}
-                onChange={(e) => setFormData({...formData, min_stock: e.target.value})}
+                onChange={(e) => updateFormData('min_stock', e.target.value)}
                 placeholder="0"
-                className="h-12 text-base border-2 border-yellow-200 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200"
+                className="h-12 text-base border-2 border-yellow-200 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 relative z-30 cursor-text"
+                style={{ position: 'relative', zIndex: 30 }}
               />
             </div>
 
@@ -476,9 +519,10 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
                 type="number"
                 min="0"
                 value={formData.max_stock}
-                onChange={(e) => setFormData({...formData, max_stock: e.target.value})}
+                onChange={(e) => updateFormData('max_stock', e.target.value)}
                 placeholder="ไม่จำกัด"
-                className="h-12 text-base border-2 border-green-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
+                className="h-12 text-base border-2 border-green-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 relative z-30 cursor-text"
+                style={{ position: 'relative', zIndex: 30 }}
               />
             </div>
           </div>
@@ -521,7 +565,10 @@ export function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
             <Button 
               type="button" 
               variant="outline" 
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                resetForm();
+                setOpen(false);
+              }}
               className="h-12 px-6 text-base border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50"
             >
               ยกเลิก

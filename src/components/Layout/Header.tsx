@@ -1,9 +1,8 @@
 import React from 'react';
-import { Bell, Search, Menu, Package, LogOut, User } from 'lucide-react';
+import { Bell, Search, Menu, Package } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/contexts/AuthContext';
 
 interface HeaderProps {
   title: string;
@@ -11,8 +10,6 @@ interface HeaderProps {
 }
 
 export function Header({ title, onMenuClick }: HeaderProps) {
-  const { user, logout } = useAuth();
-
   return (
     <header className="bg-white/90 backdrop-blur-sm shadow-card border-b border-gray-200 relative z-30">
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
@@ -52,23 +49,6 @@ export function Header({ title, onMenuClick }: HeaderProps) {
               3
             </Badge>
           </Button>
-
-          {/* User Menu */}
-          <div className="flex items-center space-x-2">
-            <div className="hidden md:flex items-center space-x-2 text-sm text-gray-600">
-              <User className="h-4 w-4" />
-              <span>{user?.username || 'ผู้ใช้'}</span>
-            </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={logout}
-              className="hover:bg-red-50 hover:text-red-600 hover:border-red-300"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              ออกจากระบบ
-            </Button>
-          </div>
         </div>
       </div>
     </header>

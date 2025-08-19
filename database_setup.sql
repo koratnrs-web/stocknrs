@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS categories (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name VARCHAR(255) NOT NULL UNIQUE,
   description TEXT,
+  is_medicine BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -38,6 +39,7 @@ CREATE TABLE IF NOT EXISTS products (
   unit VARCHAR(50) DEFAULT 'ชิ้น',
   location VARCHAR(255),
   barcode VARCHAR(255),
+  expiry_date DATE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -98,12 +100,13 @@ CREATE POLICY "Allow all operations on products" ON products FOR ALL USING (true
 CREATE POLICY "Allow all operations on movements" ON movements FOR ALL USING (true);
 
 -- 9. เพิ่มข้อมูลตัวอย่างสำหรับ categories
-INSERT INTO categories (name, description) VALUES
-('อุปกรณ์สำนักงาน', 'เครื่องเขียนและอุปกรณ์สำหรับการทำงานในสำนักงาน'),
-('อุปกรณ์คอมพิวเตอร์', 'อุปกรณ์และอะไหล่คอมพิวเตอร์'),
-('วัสดุทำความสะอาด', 'ผลิตภัณฑ์และอุปกรณ์ทำความสะอาด'),
-('วัสดุก่อสร้าง', 'วัสดุและอุปกรณ์สำหรับการก่อสร้าง'),
-('เครื่องใช้ไฟฟ้า', 'อุปกรณ์และเครื่องใช้ไฟฟ้าต่างๆ')
+INSERT INTO categories (name, description, is_medicine) VALUES
+('อุปกรณ์สำนักงาน', 'เครื่องเขียนและอุปกรณ์สำหรับการทำงานในสำนักงาน', false),
+('อุปกรณ์คอมพิวเตอร์', 'อุปกรณ์และอะไหล่คอมพิวเตอร์', false),
+('วัสดุทำความสะอาด', 'ผลิตภัณฑ์และอุปกรณ์ทำความสะอาด', false),
+('วัสดุก่อสร้าง', 'วัสดุและอุปกรณ์สำหรับการก่อสร้าง', false),
+('เครื่องใช้ไฟฟ้า', 'อุปกรณ์และเครื่องใช้ไฟฟ้าต่างๆ', false),
+('ยาและเวชภัณฑ์', 'ยาต่างๆ และเวชภัณฑ์ทางการแพทย์', true)
 ON CONFLICT (name) DO NOTHING;
 
 -- 10. เพิ่มข้อมูลตัวอย่างสำหรับ suppliers

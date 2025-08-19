@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Search, Edit, Trash2, Package, BarChart3, TrendingUp, AlertTriangle, Eye, Bell, User, LogOut } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Package, BarChart3, TrendingUp, AlertTriangle, Eye } from 'lucide-react';
 import { supabase, type Product } from '@/lib/supabase';
 import { AddProductDialog } from '@/components/Dialogs/AddProductDialog';
 import { EditProductDialog } from '@/components/Dialogs/EditProductDialog';
@@ -170,48 +170,49 @@ export default function Products() {
           secondaryActions={<AddProductDialog onProductAdded={fetchProducts} />}
         />
 
-        {/* Filters */}
-        <Card className="bg-gradient-to-br from-green-50 via-white to-emerald-50 border-2 border-green-200 shadow-xl relative overflow-hidden">
+        {/* Enhanced Search */}
+        <Card className="bg-gradient-to-br from-green-50 via-white to-blue-50 border-2 border-green-200 shadow-xl relative overflow-hidden">
           {/* Background decoration */}
           <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-0 right-0 w-48 h-48 bg-green-200 rounded-full -translate-y-24 translate-x-24 blur-2xl"></div>
-            <div className="absolute bottom-0 left-0 w-56 h-56 bg-emerald-200 rounded-full translate-y-28 -translate-x-28 blur-2xl"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-green-200 rounded-full -translate-y-32 translate-x-32 blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-200 rounded-full translate-y-40 -translate-x-40 blur-3xl"></div>
+            <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-emerald-200 rounded-full -translate-x-24 -translate-y-24 blur-2xl"></div>
           </div>
           
-          <CardContent className="p-4 sm:p-6 relative z-10">
-            <div className="space-y-4">
+          <CardContent className="p-6 sm:p-8 relative z-10">
+            <div className="space-y-6">
               {/* Scanner Status */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-base text-muted-foreground font-medium">สถานะเครื่องสแกน:</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-lg sm:text-xl text-muted-foreground font-semibold">สถานะเครื่องสแกน:</span>
                   <BarcodeScannerIndicator isDetected={scannerDetected} />
                 </div>
                 {scannerDetected && (
-                  <p className="text-sm text-green-600 font-medium bg-green-50 px-3 py-1 rounded-full border border-green-200">
-                    พร้อมใช้งาน - สแกนบาร์โค้ดเพื่อค้นหาสินค้า
+                  <p className="text-base text-green-700 font-semibold bg-green-100 px-4 py-2 rounded-full border-2 border-green-300 shadow-sm">
+                    ✨ พร้อมใช้งาน - สแกนบาร์โค้ดเพื่อค้นหาสินค้า
                   </p>
                 )}
               </div>
               
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-6">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-6 w-6" />
                   <Input
                     placeholder="ค้นหาสินค้า ชื่อ SKU หรือคำอธิบาย..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 text-base h-12 border-2 border-green-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 bg-white/80 backdrop-blur-sm"
+                    className="pl-12 text-lg h-14 border-2 border-green-200 focus:border-green-500 focus:ring-4 focus:ring-green-200/50 bg-white/90 backdrop-blur-sm font-medium placeholder:text-muted-foreground/70"
                   />
                 </div>
                 
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="w-full sm:w-40 h-12 text-base border-2 border-indigo-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 bg-white/80 backdrop-blur-sm">
+                  <SelectTrigger className="w-full sm:w-44 h-14 text-lg border-2 border-indigo-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-200/50 bg-white/90 backdrop-blur-sm font-medium">
                     <SelectValue placeholder="หมวดหมู่" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all" className="text-base">ทุกหมวดหมู่</SelectItem>
+                  <SelectContent className="bg-white/95 backdrop-blur-sm border-2 border-indigo-200">
+                    <SelectItem value="all" className="text-lg font-medium py-3">ทุกหมวดหมู่</SelectItem>
                     {categories.map(category => (
-                      <SelectItem key={category.id} value={category.id} className="text-base">
+                      <SelectItem key={category.id} value={category.id} className="text-lg font-medium py-3">
                         {category.name}
                       </SelectItem>
                     ))}
@@ -219,52 +220,16 @@ export default function Products() {
                 </Select>
                 
                 <Select value={stockFilter} onValueChange={setStockFilter}>
-                  <SelectTrigger className="w-full sm:w-40 h-12 text-base border-2 border-orange-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 bg-white/80 backdrop-blur-sm">
+                  <SelectTrigger className="w-full sm:w-44 h-14 text-lg border-2 border-orange-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-200/50 bg-white/90 backdrop-blur-sm font-medium">
                     <SelectValue placeholder="สถานะสต็อก" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all" className="text-base">ทุกสถานะ</SelectItem>
-                    <SelectItem value="normal" className="text-base">สต็อกปกติ</SelectItem>
-                    <SelectItem value="low" className="text-base">สต็อกต่ำ</SelectItem>
-                    <SelectItem value="out" className="text-base">หมดสต็อก</SelectItem>
+                  <SelectContent className="bg-white/95 backdrop-blur-sm border-2 border-orange-200">
+                    <SelectItem value="all" className="text-lg font-medium py-3">ทุกสถานะ</SelectItem>
+                    <SelectItem value="normal" className="text-lg font-medium py-3">สต็อกปกติ</SelectItem>
+                    <SelectItem value="low" className="text-lg font-medium py-3">สต็อกต่ำ</SelectItem>
+                    <SelectItem value="out" className="text-lg font-medium py-3">หมดสต็อก</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-
-              {/* Header Actions */}
-              <div className="flex items-center justify-between pt-4 border-t border-green-200">
-                <div className="flex items-center space-x-2">
-                  <AddProductDialog onProductAdded={fetchProducts} />
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  {/* Notifications */}
-                  <Button variant="ghost" size="sm" className="relative hover:bg-green-100 h-10 px-3">
-                    <Bell className="h-5 w-5 text-green-700" />
-                    <Badge 
-                      variant="destructive" 
-                      className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center"
-                    >
-                      3
-                    </Badge>
-                  </Button>
-
-                  {/* User Menu */}
-                  <div className="flex items-center space-x-2">
-                    <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-600">
-                      <User className="h-4 w-4" />
-                      <span className="font-medium">ผู้ใช้ระบบ</span>
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="hover:bg-red-50 hover:text-red-600 hover:border-red-300 h-10 px-3"
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      ออกจากระบบ
-                    </Button>
-                  </div>
-                </div>
               </div>
             </div>
           </CardContent>

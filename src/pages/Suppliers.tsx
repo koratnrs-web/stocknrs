@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Plus, Search, Edit, Trash2, Phone, Mail, MapPin, User, CheckCircle, Bell, LogOut } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Phone, Mail, MapPin, User, CheckCircle, Building2 } from 'lucide-react';
 import { PageHeader } from '@/components/Layout/PageHeader';
 import { supabase, type Supplier } from '@/lib/supabase';
 import { AddSupplierDialog } from '@/components/Dialogs/AddSupplierDialog';
@@ -112,7 +112,7 @@ export default function Suppliers() {
 
   return (
     <Layout hideHeader={true}>
-      <div className="w-full space-y-8 pb-8">
+      <div className="w-full space-y-6 pb-8">
         {/* Professional Page Header */}
         <PageHeader 
           title="ผู้จัดหา"
@@ -133,148 +133,107 @@ export default function Suppliers() {
           secondaryActions={<AddSupplierDialog onSupplierAdded={fetchSuppliers} />}
         />
 
-        {/* Search and Add */}
-        <Card className="bg-gradient-to-br from-emerald-50 via-white to-teal-50 border-2 border-emerald-200 shadow-xl relative overflow-hidden">
+        {/* Search */}
+        <Card className="bg-gradient-to-br from-green-50 via-white to-blue-50 border-2 border-green-200 shadow-xl relative overflow-hidden">
           {/* Background decoration */}
           <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-200 rounded-full -translate-y-24 translate-x-24 blur-2xl"></div>
-            <div className="absolute bottom-0 left-0 w-56 h-56 bg-teal-200 rounded-full translate-y-28 -translate-x-28 blur-2xl"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-green-200 rounded-full -translate-y-32 translate-x-32 blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-200 rounded-full translate-y-40 -translate-x-40 blur-3xl"></div>
+            <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-emerald-200 rounded-full -translate-x-24 -translate-y-24 blur-2xl"></div>
           </div>
           
-          <CardContent className="p-4 sm:p-6 relative z-10">
-            <div className="space-y-4">
+          <CardContent className="p-6 sm:p-8 relative z-10">
+            <div className="space-y-6">
               {/* Scanner Status */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-base text-muted-foreground font-medium">สถานะเครื่องสแกน:</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-lg sm:text-xl text-muted-foreground font-semibold">สถานะเครื่องสแกน:</span>
                   <BarcodeScannerIndicator isDetected={scannerDetected} />
                 </div>
                 {scannerDetected && (
-                  <p className="text-sm text-emerald-600 font-medium bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                    พร้อมใช้งาน - สแกนบาร์โค้ดเพื่อค้นหาผู้จัดหา
+                  <p className="text-base text-green-700 font-semibold bg-green-100 px-4 py-2 rounded-full border-2 border-green-300 shadow-sm">
+                    ✨ พร้อมใช้งาน - สแกนบาร์โค้ดเพื่อค้นหาผู้จัดหา
                   </p>
                 )}
               </div>
               
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                  <Input
-                    placeholder="ค้นหาผู้จัดหา..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 text-base h-12 border-2 border-emerald-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 bg-white/80 backdrop-blur-sm"
-                  />
-                </div>
-                
-                <AddSupplierDialog onSupplierAdded={fetchSuppliers} />
-              </div>
-
-              {/* Header Actions */}
-              <div className="flex items-center justify-between pt-4 border-t border-emerald-200">
-                <div className="flex items-center space-x-2">
-                  {/* Additional actions can be added here */}
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  {/* Notifications */}
-                  <Button variant="ghost" size="sm" className="relative hover:bg-emerald-100 h-10 px-3">
-                    <Bell className="h-5 w-5 text-emerald-700" />
-                    <Badge 
-                      variant="destructive" 
-                      className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center"
-                    >
-                      3
-                    </Badge>
-                  </Button>
-
-                  {/* User Menu */}
-                  <div className="flex items-center space-x-2">
-                    <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-600">
-                      <User className="h-4 w-4" />
-                      <span className="font-medium">ผู้ใช้ระบบ</span>
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="hover:bg-red-50 hover:text-red-600 hover:border-red-300 h-10 px-3"
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      ออกจากระบบ
-                    </Button>
-                  </div>
-                </div>
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-6 w-6" />
+                <Input
+                  placeholder="ค้นหาผู้จัดหา ชื่อหรืออีเมล..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-12 text-lg h-14 border-2 border-green-200 focus:border-green-500 focus:ring-4 focus:ring-green-200/50 bg-white/90 backdrop-blur-sm font-medium placeholder:text-muted-foreground/70"
+                />
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Suppliers Grid */}
-        <div className="space-y-6">
+        <div className="w-full min-h-0">
           {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {[...Array(6)].map((_, i) => (
-                <Card key={i} className="bg-gradient-to-br from-emerald-50 via-white to-teal-50 border-2 border-emerald-200 shadow-xl relative overflow-hidden">
-                  <CardContent className="p-4 sm:p-6">
+                <Card key={i} className="bg-gradient-to-br from-blue-50 via-white to-indigo-50 border-2 border-blue-200 shadow-xl relative overflow-hidden">
+                  <CardContent className="p-6 relative z-10">
                     <div className="animate-pulse space-y-4">
-                      <div className="h-4 bg-muted rounded"></div>
-                      <div className="h-3 bg-muted rounded w-3/4"></div>
-                      <div className="h-3 bg-muted rounded w-1/2"></div>
+                      <div className="h-4 bg-blue-200 rounded"></div>
+                      <div className="h-3 bg-blue-200 rounded w-3/4"></div>
+                      <div className="h-3 bg-blue-200 rounded w-1/2"></div>
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
           ) : filteredSuppliers.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
               {filteredSuppliers.map((supplier) => {
                 const productCount = productCounts[supplier.id] || 0;
                 const status = productCount > 0 ? 'active' : 'inactive';
               
                 return (
-                  <Card key={supplier.id} className="bg-gradient-to-br from-emerald-50 via-white to-teal-50 border-2 border-emerald-200 shadow-xl hover:shadow-2xl transition-all duration-200 h-fit relative overflow-hidden group">
+                  <Card key={supplier.id} className="bg-gradient-to-br from-blue-50 via-white to-indigo-50 border-2 border-blue-200 shadow-xl hover:shadow-2xl transition-all duration-300 h-fit relative overflow-hidden group">
                     {/* Background decoration */}
-                    <div className="absolute inset-0 opacity-10">
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-200 rounded-full -translate-y-16 translate-x-16 blur-2xl group-hover:scale-150 transition-transform duration-300"></div>
+                    <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-300">
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-blue-200 rounded-full -translate-y-16 translate-x-16 blur-2xl"></div>
+                      <div className="absolute bottom-0 left-0 w-40 h-40 bg-indigo-200 rounded-full translate-y-20 -translate-x-20 blur-2xl"></div>
                     </div>
                     
                     <CardHeader className="pb-3 relative z-10">
-                      <div className="flex items-start justify-between gap-2">
-                        <CardTitle className="text-lg sm:text-xl font-bold text-gray-800 flex-1 min-w-0">
-                          <span className="break-words">{supplier.name}</span>
-                        </CardTitle>
+                      <div className="flex items-start justify-between gap-2 mb-3">
                         <div className="flex items-center space-x-2 flex-shrink-0">
                           <Badge variant={status === 'active' ? 'default' : 'secondary'} 
-                                 className={`text-sm font-semibold px-3 py-1 ${status === 'active' ? 'bg-green-500/10 text-green-700 border-2 border-green-200' : 'bg-gray-500/10 text-gray-600 border-2 border-gray-200'}`}>
+                                 className={`text-xs font-bold px-3 py-1 ${status === 'active' ? 'bg-green-500/10 text-green-600' : 'bg-gray-500/10 text-gray-600'}`}>
                             {status === 'active' ? 'ใช้งาน' : 'ไม่ใช้งาน'}
                           </Badge>
-                          <div className="flex space-x-2">
+                          <div className="flex space-x-1">
                             <Button 
                               variant="ghost" 
                               size="sm"
-                              className="h-8 w-8 p-0 hover:bg-emerald-50"
                               onClick={() => handleEditSupplier(supplier)}
+                              className="h-8 w-8 p-0 hover:bg-blue-50"
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
-                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50">
+                                <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive h-8 w-8 p-0 hover:bg-red-50">
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               </AlertDialogTrigger>
-                              <AlertDialogContent className="bg-gradient-to-br from-white to-red-50 border-2 border-red-200 shadow-2xl">
+                              <AlertDialogContent className="bg-gradient-to-br from-white to-blue-50 shadow-2xl border-2 border-blue-200">
                                 <AlertDialogHeader>
-                                  <AlertDialogTitle className="text-xl font-bold text-gray-800">ยืนยันการลบ</AlertDialogTitle>
-                                  <AlertDialogDescription className="text-base text-gray-600">
+                                  <AlertDialogTitle className="text-lg font-bold text-blue-800">ยืนยันการลบ</AlertDialogTitle>
+                                  <AlertDialogDescription className="text-base">
                                     คุณแน่ใจหรือไม่ที่จะลบผู้จัดหา "{supplier.name}"? การกระทำนี้ไม่สามารถยกเลิกได้
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
-                                  <AlertDialogCancel className="border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50">ยกเลิก</AlertDialogCancel>
+                                  <AlertDialogCancel className="border-2 border-blue-200 hover:bg-blue-50">ยกเลิก</AlertDialogCancel>
                                   <AlertDialogAction
                                     onClick={() => handleDeleteSupplier(supplier.id)}
-                                    className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg"
+                                    className="bg-red-500 hover:bg-red-600 text-white font-bold"
                                   >
                                     ลบ
                                   </AlertDialogAction>
@@ -284,30 +243,35 @@ export default function Suppliers() {
                           </div>
                         </div>
                       </div>
+                      
+                      {/* Company Name - Moved to separate line */}
+                      <CardTitle className="text-lg sm:text-xl font-bold text-blue-800 break-words leading-tight">
+                        {supplier.name}
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4 relative z-10">
                       <div className="space-y-3">
-                        <div className="flex items-center text-sm text-gray-600 font-medium">
-                          <Mail className="mr-3 h-4 w-4 flex-shrink-0 text-emerald-600" />
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Mail className="mr-3 h-4 w-4 flex-shrink-0 text-blue-500" />
                           <span className="break-all flex-1">{supplier.email}</span>
                         </div>
-                        <div className="flex items-center text-sm text-gray-600 font-medium">
-                          <Phone className="mr-3 h-4 w-4 flex-shrink-0 text-emerald-600" />
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Phone className="mr-3 h-4 w-4 flex-shrink-0 text-green-500" />
                           <span className="break-all flex-1">{supplier.phone}</span>
                         </div>
                         {supplier.address && (
-                          <div className="flex items-start text-sm text-gray-600 font-medium">
-                            <MapPin className="mr-3 h-4 w-4 flex-shrink-0 mt-0.5 text-emerald-600" />
+                          <div className="flex items-start text-sm text-muted-foreground">
+                            <MapPin className="mr-3 h-4 w-4 flex-shrink-0 mt-0.5 text-orange-500" />
                             <span className="break-words flex-1">{supplier.address}</span>
                           </div>
                         )}
                       </div>
                       
-                      <div className="flex items-center justify-between pt-3 border-t border-emerald-200">
-                        <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-700 text-sm font-semibold px-3 py-1">
+                      <div className="flex items-center justify-between pt-3 border-t border-blue-100">
+                        <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 text-xs font-bold px-3 py-1">
                           {productCount.toLocaleString()} สินค้า
                         </Badge>
-                        <span className="text-xs text-gray-500 truncate font-medium">
+                        <span className="text-xs text-muted-foreground truncate">
                           ID: {supplier.id.slice(0, 8)}...
                         </span>
                       </div>
@@ -317,9 +281,16 @@ export default function Suppliers() {
               })}
             </div>
           ) : (
-            <Card className="bg-gradient-to-br from-gray-50 via-white to-gray-100 border-2 border-gray-200 shadow-xl">
-              <CardContent className="p-8 sm:p-12 text-center">
-                <p className="text-lg text-gray-600 font-medium">ไม่พบผู้จัดหาที่ตรงกับการค้นหา</p>
+            <Card className="bg-gradient-to-br from-blue-50 via-white to-indigo-50 border-2 border-blue-200 shadow-xl relative overflow-hidden">
+              {/* Background decoration */}
+              <div className="absolute inset-0 opacity-20">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-200 rounded-full -translate-y-32 translate-x-32 blur-3xl"></div>
+                <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-200 rounded-full translate-y-40 -translate-x-40 blur-3xl"></div>
+              </div>
+              
+              <CardContent className="p-12 text-center relative z-10">
+                <Building2 className="h-16 w-16 text-blue-300 mx-auto mb-4" />
+                <p className="text-lg font-medium text-blue-800">ไม่พบผู้จัดหาที่ตรงกับการค้นหา</p>
               </CardContent>
             </Card>
           )}
